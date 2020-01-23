@@ -20,13 +20,84 @@ class ViewController: UIViewController, CNContactPickerDelegate {
         super.viewDidLoad()
         self.checkAccess()
     }
+    
+    func alert(msg: String) -> Void {
+        let alert = UIAlertController(title: "Error", message: msg, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+        present(alert, animated: true)
+    }
+    
+    func validName(name: String) -> String {
+        let range = NSRange(location: 0, length: name.count)
+        let regex = try! NSRegularExpression(pattern: "[a-zA-Z]")
+        
+        if regex.firstMatch(in: name, options: [], range: range) != nil {
+            return name
+        }
+        else {
+            alert(msg: "Invalid Name")
+            return "err"
+        }
+    }
+    
+    func validPhone(phone: String) -> String {
+        let range = NSRange(location: 0, length: phone.count)
+        let regex = try! NSRegularExpression(pattern: "[6-9][0-9]{9}")
+        
+        if regex.firstMatch(in: phone, options: [], range: range) != nil {
+            return phone
+        }
+        else {
+            alert(msg: "Invalid Phone")
+            return "err"
+        }
+    }
+    
+    func validEmail(email: String) -> String {
+        let range = NSRange(location: 0, length: email.count)
+        let regex = try! NSRegularExpression(pattern: "[0-9a-zA-Z]+@[a-z]+.[a-z]+")
+        
+        if regex.firstMatch(in: email, options: [], range: range) != nil {
+            return email
+        }
+        else {
+            alert(msg: "Invalid Email")
+            return "err"
+        }
+    }
+    
     @IBAction func addContact(_ sender: Any) {
         let contact = CNMutableContact()
-        contact.givenName = name.text!
-        let phoneNo = CNLabeledValue(label: CNLabelHome, value: CNPhoneNumber(stringValue: phone.text!))
+        var cName: String?
+        var cPhone: String?
+        var cEmail: String?
+        
+        if let temp = name.text {
+            cName = validName(name: temp)
+        }
+        
+        if let temp = phone.text {
+            cPhone = validPhone(phone: temp)
+        }
+        
+        if let temp = email.text {
+            cEmail = validEmail(email: temp)
+        }
+        
+        if cName == nil || cEmail == nil || cPhone == nil {
+            alert(msg: "Missing inputs!")
+            return
+        }
+        
+        if cName == "err" || cEmail == "err" || cPhone == "err"{
+           return
+        }
+        
+        contact.givenName = cName!
+        let phoneNo = CNLabeledValue(label: CNLabelHome, value: CNPhoneNumber(stringValue: cPhone!))
         contact.phoneNumbers = [phoneNo]
         
-        let emailId = CNLabeledValue(label: CNLabelHome, value: phone.text! as NSString)
+        let emailId = CNLabeledValue(label: CNLabelHome, value: cEmail! as NSString)
         contact.emailAddresses = [emailId]
         
         let request = CNSaveRequest()

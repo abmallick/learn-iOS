@@ -38,7 +38,9 @@ class ViewController: UIViewController {
       }
     }
 
-
+    func alert(msg: String) -> Void {
+        //to be implemented
+    }
     
     @IBAction func addName(_ sender: Any) {
         let alert = UIAlertController(title: "New Student", message: "Add a new student", preferredStyle: .alert)
@@ -79,6 +81,7 @@ class ViewController: UIViewController {
           let rollNo = textField5.text else {
             return
         }
+            
         let student = Student(name: name, age: age, address: address, rollNo: rollNo, course: course)
           self.save(student : student)
           self.tableView.reloadData()
